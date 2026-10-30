@@ -1,0 +1,254 @@
+/* See the Tailwind configuration guide for advanced usage
+   https://tailwindcss.com/docs/configuration */
+
+@import "tailwindcss" source(none);
+@import "phoenix-colocated/obs_slideshow_overlay/colocated.css";
+@source "../css";
+@source "../js";
+@source "../../lib/obs_slideshow_overlay_web";
+/* Required for Tailwind to automatically pick up changes in colocated CSS files in dev */
+@source "../../_build/dev/phoenix-colocated/obs_slideshow_overlay/*/";
+
+/* A Tailwind plugin that makes "hero-#{ICON}" classes available.
+   The heroicons installation itself is managed by your mix.exs */
+@plugin "../vendor/heroicons";
+
+/* daisyUI Tailwind Plugin. */
+@plugin "daisyui/packages/bundle/daisyui" {
+  themes: false;
+}
+
+/* daisyUI theme plugin.
+  We ship with two themes, a light one inspired on Phoenix colors and a dark one inspired
+  on Elixir colors. Build your own at: https://daisyui.com/theme-generator/ */
+@plugin "daisyui/packages/bundle/daisyui-theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: "dark";
+  --color-base-100: oklch(30.33% 0.016 252.42);
+  --color-base-200: oklch(25.26% 0.014 253.1);
+  --color-base-300: oklch(20.15% 0.012 254.09);
+  --color-base-content: oklch(97.807% 0.029 256.847);
+  --color-primary: oklch(58% 0.233 277.117);
+  --color-primary-content: oklch(96% 0.018 272.314);
+  --color-secondary: oklch(58% 0.233 277.117);
+  --color-secondary-content: oklch(96% 0.018 272.314);
+  --color-accent: oklch(60% 0.25 292.717);
+  --color-accent-content: oklch(96% 0.016 293.756);
+  --color-neutral: oklch(37% 0.044 257.287);
+  --color-neutral-content: oklch(98% 0.003 247.858);
+  --color-info: oklch(58% 0.158 241.966);
+  --color-info-content: oklch(97% 0.013 236.62);
+  --color-success: oklch(60% 0.118 184.704);
+  --color-success-content: oklch(98% 0.014 180.72);
+  --color-warning: oklch(66% 0.179 58.318);
+  --color-warning-content: oklch(98% 0.022 95.277);
+  --color-error: oklch(58% 0.253 17.585);
+  --color-error-content: oklch(96% 0.015 12.422);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/packages/bundle/daisyui-theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: "light";
+  --color-base-100: oklch(98% 0 0);
+  --color-base-200: oklch(96% 0.001 286.375);
+  --color-base-300: oklch(92% 0.004 286.32);
+  --color-base-content: oklch(21% 0.006 285.885);
+  --color-primary: oklch(70% 0.213 47.604);
+  --color-primary-content: oklch(98% 0.016 73.684);
+  --color-secondary: oklch(55% 0.027 264.364);
+  --color-secondary-content: oklch(98% 0.002 247.839);
+  --color-accent: oklch(0% 0 0);
+  --color-accent-content: oklch(100% 0 0);
+  --color-neutral: oklch(44% 0.017 285.786);
+  --color-neutral-content: oklch(98% 0 0);
+  --color-info: oklch(62% 0.214 259.815);
+  --color-info-content: oklch(97% 0.014 254.604);
+  --color-success: oklch(70% 0.14 182.503);
+  --color-success-content: oklch(98% 0.014 180.72);
+  --color-warning: oklch(66% 0.179 58.318);
+  --color-warning-content: oklch(98% 0.022 95.277);
+  --color-error: oklch(58% 0.253 17.585);
+  --color-error-content: oklch(96% 0.015 12.422);
+  --radius-selector: 0.25rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.21875rem;
+  --size-field: 0.21875rem;
+  --border: 1.5px;
+  --depth: 1;
+  --noise: 0;
+}
+
+/* Add variants based on LiveView classes */
+@custom-variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
+@custom-variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
+@custom-variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
+
+/* Use the data attribute for dark mode  */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Make LiveView wrapper divs transparent for layout */
+[data-phx-session], [data-phx-teleported-src] { display: contents }
+
+/* This file is for your main application CSS */
+
+/* Gallery: the drop targets appear while files are dragged over the window
+   (see FileDrag in js/slides.js). */
+body[data-dragging] #drop-overlay { display: flex; }
+
+/* Previews: the backdrop toggle (see backdrop_toggle in slide_components.ex).
+   With the background hidden, a checkerboard shows what's transparent. */
+.slide-frame {
+  background-color: #6b6b6b;
+  background-image: conic-gradient(#8a8a8a 25%, transparent 0 50%, #8a8a8a 0 75%, transparent 0);
+  background-size: 16px 16px;
+}
+html[data-backdrop="off"] .slide-backdrop { display: none; }
+html[data-backdrop="off"] .backdrop-on,
+html:not([data-backdrop="off"]) .backdrop-off { display: none; }
+
+/* Dragging to reorder (SortableJS, see js/slides.js): the spot the drag will
+   land in is a dashed outline with its content faded back; the card being
+   carried is lifted with a shadow. */
+.drop-spot {
+  border: 2px dashed var(--color-primary) !important;
+  background-color: color-mix(in oklab, var(--color-primary) 12%, transparent) !important;
+  border-radius: var(--radius-box);
+}
+.drop-spot > * { opacity: 0.3; }
+.dragging {
+  opacity: 0.95 !important;
+  box-shadow: 0 16px 40px rgb(0 0 0 / 0.45);
+  border-radius: var(--radius-box);
+  cursor: grabbing;
+}
+
+/* The Themes page's preview (ThemePreview in js/slides.js): text outlined to
+   show which style draws it, for the open (or hovered) section, and on
+   hover. Outlines are in slide pixels, so they're scaled down with the
+   preview. */
+#theme-pane [data-style] { cursor: pointer; }
+#theme-pane [data-style="title_style"] { cursor: move; }
+#theme-pane [data-style]:hover {
+  outline: 6px dashed color-mix(in oklab, var(--color-primary) 55%, transparent);
+  outline-offset: 10px;
+}
+#theme-pane[data-highlight="title_style"] [data-style="title_style"],
+#theme-pane[data-highlight="name_style"] [data-style="name_style"],
+#theme-pane[data-highlight="detail_style"] [data-style="detail_style"],
+#theme-pane[data-highlight="footer_style"] [data-style="footer_style"],
+#theme-pane[data-highlight="heading_style"] [data-style="heading_style"],
+#theme-pane[data-highlight="body_style"] [data-style="body_style"],
+#theme-pane[data-highlight="content_area"] [data-style="content_area"] {
+  outline: 6px dashed var(--color-primary);
+  outline-offset: 10px;
+}
+
+/* The Themes page's font menu (FontInput in js/slides.js), on the page's
+   body so the form's scrolling doesn't clip it. */
+.font-menu {
+  position: fixed;
+  z-index: 60;
+  overflow-y: auto;
+  padding: 0.25rem;
+  border: 1px solid var(--color-base-300);
+  border-radius: var(--radius-box);
+  background: var(--color-base-100);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+}
+.font-menu[hidden] { display: none; }
+.font-menu [role=option] {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius-field);
+  font-size: 1.15rem;
+  cursor: pointer;
+  /* Hundreds of fonts: only the ones scrolled into view are drawn. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 2.2rem;
+}
+.font-menu [role=option] span { flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.font-menu [role=option] small { font-size: 0.7rem; opacity: 0.5; white-space: nowrap; }
+.font-menu [role=option][aria-selected=true] {
+  background: color-mix(in oklab, var(--color-primary) 22%, transparent);
+}
+.font-menu-heading {
+  padding: 0.5rem 0.6rem 0.2rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+.font-menu-note { padding: 0.4rem 0.6rem; font-size: 0.8rem; opacity: 0.65; }
+
+/* The content area's box over the Themes preview: invisible until hovered or
+   its section is open, when it shows the inner box for contained images
+   and handles to resize it. Sizes are in slide pixels (the preview is
+   scaled down to about a third). */
+#theme-pane [data-style="content_area"] { z-index: 5; }
+#theme-pane[data-open="content_area"] [data-style="content_area"] { cursor: move; }
+#theme-pane .content-area-inner,
+#theme-pane .content-area-handle { display: none; position: absolute; }
+#theme-pane[data-open="content_area"] .content-area-inner,
+#theme-pane[data-open="content_area"] .content-area-handle { display: block; }
+#theme-pane .content-area-inner {
+  border: 4px dotted color-mix(in oklab, var(--color-primary) 70%, white);
+  pointer-events: none;
+}
+#theme-pane .content-area-handle {
+  width: 36px;
+  height: 36px;
+  margin: -18px 0 0 -18px;
+  border: 5px solid white;
+  border-radius: 6px;
+  background: var(--color-primary);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.5);
+}
+#theme-pane .content-area-handle[data-handle="nw"] { left: 0; top: 0; cursor: nwse-resize; }
+#theme-pane .content-area-handle[data-handle="n"] { left: 50%; top: 0; cursor: ns-resize; }
+#theme-pane .content-area-handle[data-handle="ne"] { left: 100%; top: 0; cursor: nesw-resize; }
+#theme-pane .content-area-handle[data-handle="e"] { left: 100%; top: 50%; cursor: ew-resize; }
+#theme-pane .content-area-handle[data-handle="se"] { left: 100%; top: 100%; cursor: nwse-resize; }
+#theme-pane .content-area-handle[data-handle="s"] { left: 50%; top: 100%; cursor: ns-resize; }
+#theme-pane .content-area-handle[data-handle="sw"] { left: 0; top: 100%; cursor: nesw-resize; }
+#theme-pane .content-area-handle[data-handle="w"] { left: 0; top: 50%; cursor: ew-resize; }
+
+/* The title's width over the Themes preview, while its section is open:
+   a dashed box with a handle on its right edge. */
+#title-limit {
+  position: absolute;
+  z-index: 4;
+  border: 4px dashed color-mix(in oklab, var(--color-primary) 70%, white);
+  pointer-events: none;
+}
+/* With its width box showing, the title itself isn't outlined too. */
+#theme-pane[data-open="title_style"] [data-style="title_style"] { outline: none; }
+#title-limit .title-limit-handle {
+  position: absolute;
+  top: 50%;
+  right: -22px;
+  width: 40px;
+  height: 80px;
+  margin-top: -40px;
+  border: 5px solid white;
+  border-radius: 8px;
+  background: var(--color-primary);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.5);
+  cursor: ew-resize;
+  pointer-events: auto;
+}
